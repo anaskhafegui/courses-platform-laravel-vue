@@ -18,6 +18,10 @@ Route::get('/', function () {
 Route::get('/logout', function() { auth()->logout(); return redirect('/'); });
 Route::get('register/confirm', 'ConfirmEmailController@index')->name('confirm-email');
 
+Route::prefix('admin')->group(function() {
+    Route::resource('series','SeriesController');
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

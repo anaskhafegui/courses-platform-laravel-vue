@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Bahdcasts\Http\Controllers\Admin;
 
-use App\Series;
+use Bahdcasts\Series;
+use Bahdcasts\Lesson;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateSeriesRequest;
-use App\Http\Requests\UpdateSeriesRequest;
+use Bahdcasts\Http\Controllers\Controller;
+use Bahdcasts\Http\Requests\UpdateLessonRequest;
+use Bahdcasts\Http\Requests\CreateLessonRequest;
 
-class SeriesController extends Controller
+class LessonsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +18,7 @@ class SeriesController extends Controller
      */
     public function index()
     {
-        return view('admin.series.all'); //->withSeries(Series::all())
+        //
     }
 
     /**
@@ -27,7 +28,7 @@ class SeriesController extends Controller
      */
     public function create()
     {
-        return view('admin.series.create');
+        //
     }
 
     /**
@@ -36,10 +37,9 @@ class SeriesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateSeriesRequest $request)
+    public function store(Series $series, CreateLessonRequest $request)
     {
-        return $request->uploadSeriesImage()
-                ->storeSeries();
+        return $series->lessons()->create($request->all());
     }
 
     /**
@@ -48,10 +48,9 @@ class SeriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Series $series)
+    public function show($id)
     {
-        return view('admin.series.index')
-                ->withSeries($series);
+        //
     }
 
     /**
@@ -60,9 +59,9 @@ class SeriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Series $series)
+    public function edit($id)
     {
-        return view('admin.series.edit')->withSeries($series);
+        //
     }
 
     /**
@@ -72,12 +71,11 @@ class SeriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSeriesRequest $request, Series $series)
+    public function update(Series $series, Lesson $lesson, UpdateLessonRequest $request)
     {
-        $request->updateSeries($series);
+        $lesson->update($request->all());
 
-        session()->flash('success', 'Successfully updated series');
-        return redirect()->route('series.index');
+        return $lesson->fresh();
     }
 
     /**
@@ -86,8 +84,10 @@ class SeriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Series $series, Lesson $lesson)
     {
-        //
+        $lesson->delete();
+
+        return response()->json(['status' => 'ok'], 200);
     }
 }
